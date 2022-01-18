@@ -23,6 +23,7 @@
 #include "QKeyValueIterator.h"
 #include "QCachingIterator.h"
 #include "Logging.h"
+#include <iostream>
 
 //#define OSMAND_VERBOSE_MAP_PRIMITIVISER 1
 #if !defined(OSMAND_VERBOSE_MAP_PRIMITIVISER)
@@ -1857,6 +1858,13 @@ void OsmAnd::MapPrimitiviser_P::sortAndFilterPrimitives(
     std::sort(primitivisedObjects->polylines, privitivesSort);
     filterOutHighwaysByDensity(context, primitivisedObjects, metric);
     std::sort(primitivisedObjects->points, privitivesSort);
+    for (const auto& symbolGroupEntry : rangeOf(constOf(primitivisedObjects->symbolsGroups))) {
+        for (const auto& symbol : constOf(symbolGroupEntry.value()->symbols)) {
+            std::cout << "=========!!!===============" << std::endl;
+            std::cout << "symbolsGroup = " << std::to_string(symbol->order) << std::endl;
+            std::cout << "==========!!!==============" << std::endl;
+        }
+    }
 }
 
 void OsmAnd::MapPrimitiviser_P::filterOutHighwaysByDensity(

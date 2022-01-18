@@ -21,6 +21,7 @@
 #include "SkiaUtilities.h"
 #include "Utilities.h"
 #include "Logging.h"
+#include <iostream>
 
 // #define OSMAND_DUMP_SYMBOLS 1
 #if !defined(OSMAND_DUMP_SYMBOLS)
@@ -34,6 +35,12 @@ OsmAnd::SymbolRasterizer_P::SymbolRasterizer_P(SymbolRasterizer* const owner_)
 
 OsmAnd::SymbolRasterizer_P::~SymbolRasterizer_P()
 {
+}
+
+template<typename T>
+std::ostream& operator<<(typename std::enable_if<std::is_enum<T>::value, std::ostream>::type& stream, const T& e)
+{
+    return stream << static_cast<typename std::underlying_type<T>::type>(e);
 }
 
 void OsmAnd::SymbolRasterizer_P::rasterize(
@@ -51,12 +58,23 @@ void OsmAnd::SymbolRasterizer_P::rasterize(
 
         const auto& mapObject = symbolGroupEntry.key();
         const auto& symbolsGroup = symbolGroupEntry.value();
+        for (const auto& symbol : constOf(symbolsGroup->symbols)) {
+            std::cout << "========================" << std::endl;
+            std::cout << "symbolsGroup = " << std::to_string(symbol->order) << std::endl;
+            std::cout << "symbol->primitive->type = " << MapPrimitiviser::PrimitiveType(symbol->primitive->type) << std::endl;
+            for (auto symb : symbol->intersectsWith) {
+                std::cout << "symbol->intersectsWith = " << symb.toStdString() << std::endl;
+            }
+        }
+        
 
         //////////////////////////////////////////////////////////////////////////
-        //if (mapObject->toString().contains("1333827773"))
-        //{
-        //    int i = 5;
-        //}
+        if (mapObject->toString().contains("name with "))
+        {
+            std::cout << "!!!obj = " << (mapObject->toString()).toStdString() << std::endl;
+        } else {
+            std::cout << "obj = " << (mapObject->toString()).toStdString() << std::endl;
+        }
         //////////////////////////////////////////////////////////////////////////
 
         // Apply filter, if it's present
@@ -79,6 +97,7 @@ void OsmAnd::SymbolRasterizer_P::rasterize(
 
             if (const auto& textSymbol = std::dynamic_pointer_cast<const MapPrimitiviser::TextSymbol>(symbol))
             {
+                std::cout << "textSymbol = " << (textSymbol->value).toStdString() << std::endl;
                 TextRasterizer::Style style;
                 if (!textSymbol->drawOnPath && textSymbol->shieldResourceName.isEmpty())
                     style.wrapWidth = textSymbol->wrapWidth;

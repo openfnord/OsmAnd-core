@@ -17,6 +17,7 @@
 #include "MapObject.h"
 #include "ObfMapSectionInfo.h"
 #include "Utilities.h"
+#include <iostream>
 
 OsmAnd::MapObjectsSymbolsProvider_P::MapObjectsSymbolsProvider_P(MapObjectsSymbolsProvider* owner_)
     : owner(owner_)
@@ -25,6 +26,12 @@ OsmAnd::MapObjectsSymbolsProvider_P::MapObjectsSymbolsProvider_P(MapObjectsSymbo
 
 OsmAnd::MapObjectsSymbolsProvider_P::~MapObjectsSymbolsProvider_P()
 {
+}
+
+template<typename T>
+std::ostream& operator<<(typename std::enable_if<std::is_enum<T>::value, std::ostream>::type& stream, const T& e)
+{
+    return stream << static_cast<typename std::underlying_type<T>::type>(e);
 }
 
 bool OsmAnd::MapObjectsSymbolsProvider_P::obtainData(
@@ -66,6 +73,17 @@ bool OsmAnd::MapObjectsSymbolsProvider_P::obtainData(
             }
             return false;
         };
+    
+    for (const auto& symbolGroupEntry : rangeOf(constOf( primitivesTile->primitivisedObjects->symbolsGroups))) {
+        for (const auto& symbol : constOf(symbolGroupEntry.value()->symbols)) {
+            std::cout << "=========!!!===============" << std::endl;
+            std::cout << "symbolsGroup = " << std::to_string(symbol->order) << std::endl;
+            std::cout << "symbol->primitive->type = " << MapPrimitiviser::PrimitiveType(symbol->primitive->type) << std::endl;
+            for (auto symb : symbol->intersectsWith) {
+                std::cout << "symbol->intersectsWith = " << symb.toStdString() << std::endl;
+            }
+        }
+    }
     owner->symbolRasterizer->rasterize(
         primitivesTile->primitivisedObjects,
         rasterizedSymbolsGroups,

@@ -15,6 +15,7 @@
 #include <OsmAndCore/Map/MapPrimitiviser.h>
 #include <OsmAndCore/Map/IMapObjectsProvider.h>
 #include <OsmAndCore/Map/MapPrimitivesProvider_Metrics.h>
+#include <iostream>
 
 namespace OsmAnd
 {
@@ -40,7 +41,6 @@ namespace OsmAnd
             std::shared_ptr<const IMapObjectsProvider::Data> mapObjectsData;
             std::shared_ptr<const MapPrimitiviser::PrimitivisedObjects> primitivisedObjects;
         };
-
         enum class Mode
         {
             AllObjectsWithoutPolygonFiltering,
